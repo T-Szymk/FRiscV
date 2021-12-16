@@ -8,10 +8,10 @@ Start by implementing data/control for add/sub, and/or, slt, lw/sw, beq. Once th
 
 ## Repo Structure
 -**FRiscV**-
-       |-**rtl**: RTL Design files 
-       |-**tb**: RTL testbenches
-       |-**scripts**
-         |-**tcl**: TCL files to drive FPGA synth
-         |-**sim**: .do files used for simulation of RTL
-       |-**doc**: Images/helpful documentation
-       |-**fpga**: Artefacts used in FPGA flow 
+       |-**rtl**: RTL Design files  
+       |-**tb**: RTL testbenches  
+       |-**scripts**  
+         |-**tcl**: TCL files to drive FPGA synth  
+         |-**sim**: .do files used for simulation of RTL  
+       |-**doc**: Images/helpful documentation  
+       |-**fpga**: Artefacts used in FPGA flow  
