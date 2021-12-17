@@ -13,7 +13,10 @@
 
 import friscv_pkg::*;
  
-module alu_tb;
+module alu_tb #(
+    parameter SIMULATION_RUNTIME_PS = 100_000_000 
+  );
+
 
   logic signed [3:0] dut_ctrl_in;
   logic signed [ARCH-1:0] dut_a_in;
@@ -22,6 +25,7 @@ module alu_tb;
   logic dut_zero_out;
   
   class TestData;
+    rand bit signed [3:0] ctrl;
     rand bit signed [ARCH-1:0] a;
     rand bit signed [ARCH-1:0] b;
   endclass // TestData
@@ -35,67 +39,62 @@ module alu_tb;
   );
 
   initial begin 
+
     static TestData data = new();
     {dut_ctrl_in, dut_a_in, dut_b_in} = '0;
-    while($time < 100_000) begin
+
+    while($time < SIMULATION_RUNTIME_PS) begin
       data.randomize();
-      check_and(data.a, data.b);
-      check_or(data.a, data.b);
+      dut_a_in = data.a;
+      dut_b_in = data.b;
+      dut_ctrl_in = data.ctrl;
+      #1
+      case (data.ctrl)
+        AND : // AND
+          assert(dut_result_out == (data.a & data.b)) else 
+          $warning("and operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a & data.b), dut_result_out);
+        OR : // OR
+          assert(dut_result_out == (data.a | data.b)) else 
+          $warning("or operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a | data.b), dut_result_out);
+        XOR : // XOR
+          assert(dut_result_out == (data.a ^ data.b)) else 
+          $warning("xor operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a ^ data.b), dut_result_out);
+        ADD : // ADD
+          assert(dut_result_out == (data.a + data.b)) else 
+          $warning("add operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a + data.b), dut_result_out);
+        SUB : // SUB
+          assert(dut_result_out == (data.a - data.b)) else 
+          $warning("sub operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a - data.b), dut_result_out);
+        SLT : // SLT
+          assert(dut_result_out == (data.a < data.b)) else 
+          $warning("slt operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a < data.b), dut_result_out);
+        SLL : // SLL
+          assert(dut_result_out == (data.a << data.b)) else 
+          $warning("sll operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a << data.b), dut_result_out);
+        SAR : // SAR
+          assert(dut_result_out == (data.a >>> data.b)) else 
+          $warning("sar operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a >>> data.b), dut_result_out);
+        SLR : // SLR
+          assert(dut_result_out == (data.a >> data.b)) else 
+          $warning("slr operation failed! Expected 0x%0x, got 0x%0x.", 
+                  (data.a >> data.b), dut_result_out);
+        default: 
+          assert(dut_result_out == '0) else 
+          $warning("Undefined operation failed! Expected 0x%0x, got 0x%0x.", 
+                  32'b0, dut_result_out);
+      endcase;
+
     end
+    $display("Simulation Complete!");
     $finish;
   end
-
-  task check_and(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  begin
-    dut_a_in = a;
-    dut_b_in = b;
-    #1 assert(dut_result_out == (a & b)) else 
-       $warning("and_check operation failed! Expected 0x%0x, got 0x%0x.", 
-                (a & b), dut_result_out);
-  end
-  endtask // and
-
-  task check_or(bit [ARCH-1:0] a,
-                bit [ARCH-1:0] b);
-    dut_a_in = a;
-    dut_b_in = b;
-    #1 assert(dut_result_out == (a | b)) else 
-       $warning("or_check operation failed! Expected 0x%0x, got 0x%0x.", 
-                (a | b), dut_result_out);
-  endtask // check_or
-
-  task check_xor(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-    dut_a_in = a;
-    dut_b_in = b;
-    #1 assert(dut_result_out == signed'(a ^ b)) else 
-       $warning("xor_check operation failed! Expected 0x%0x, got 0x%0x.", 
-                (a ^ b), dut_result_out);
-  endtask // check_xor
-
-  task check_add(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_add
-
-  task check_sub(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_sub
-
-  task check_slt(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_slt
-
-  task check_sll(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_sll
-
-  task check_sar(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_sar
-
-  task check_slr(bit [ARCH-1:0] a,
-                 bit [ARCH-1:0] b);
-  endtask // check_slr
 
 endmodule // alu_tb
