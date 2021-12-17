@@ -4,7 +4,7 @@
 RV32I Implementation to be run on FPGA.
 
 ### Strategy
-Start by implementing data/control for add/sub, and/or, slt, lw/sw, beq. Once this is complete, look at expanding to cover remaining instructions.
+Start by implementing data/control for add/sub, and/or/xor, slt, lw/sw, beq. Once this is complete, look at expanding to cover remaining instructions.
 
 ## Repo Structure
 -**FRiscV**-
