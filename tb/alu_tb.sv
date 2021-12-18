@@ -2,21 +2,20 @@
  * Module   : alu_tb
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 17-Dec-2021
+ * Mod. Date: 18-Dec-2021
  *******************************************************************************
  * Description:
  * ============
  * Test bench for verifying alu.sv module
  ******************************************************************************/
 
-`timescale 1 ns/1 ps
-
 import friscv_pkg::*;
  
 module alu_tb #(
-    parameter SIMULATION_RUNTIME_PS = 100_000_000 
-  );
-
+    parameter SIMULATION_RUNTIME = 100_000 // determine units from timescale or 
+  );                                       // timeunit
+  
+  timeunit 1ns/1ps;
 
   logic signed [3:0] dut_ctrl_in;
   logic signed [ARCH-1:0] dut_a_in;
@@ -43,7 +42,7 @@ module alu_tb #(
     static TestData data = new();
     {dut_ctrl_in, dut_a_in, dut_b_in} = '0;
 
-    while($time < SIMULATION_RUNTIME_PS) begin
+    while($time < SIMULATION_RUNTIME) begin
       data.randomize();
       dut_a_in = data.a;
       dut_b_in = data.b;

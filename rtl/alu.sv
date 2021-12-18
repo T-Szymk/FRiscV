@@ -2,14 +2,13 @@
  * Module   : alu
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 17-Dec-2021
+ * Mod. Date: 18-Dec-2021
  *******************************************************************************
  * Description:
  * ============
  * ALU to be used with FRiscV CPU.
  * Designed for RV32I ISA.
  ******************************************************************************/
-`timescale 1 ns/1 ps
 
 import friscv_pkg::*;
 
