@@ -58,6 +58,7 @@ module reg_file_tb #(
   );
 
   task ver_reg0;
+    $info("Verifying that reading from r0 produces a 0.");
     dut_addr_w  = '0;
     dut_addr_r1 = '0;
     dut_addr_r2 = '0;
@@ -74,6 +75,9 @@ module reg_file_tb #(
   endtask // ver_reg0
 
   task init_mem(TestData data);
+
+    $info("Initialising register file with random values.");
+    
     dut_we = 1'b1;
     for(int idx = 0; idx < REGFILE_DEPTH; idx++) begin
       data.randomize();
@@ -90,6 +94,8 @@ module reg_file_tb #(
     init_mem(data);
     
     ver_reg0();
+
+    $info("Verifying random reads and writes to all register locations.");
 
     while ($time < SIMULATION_RUNTIME) begin : main_tb_loop
       data.randomize();
@@ -125,7 +131,7 @@ module reg_file_tb #(
 
     end : main_tb_loop
 
-    $display("Simulation Complete!");
+    $info("Simulation Complete!");
     $finish;
   end
 

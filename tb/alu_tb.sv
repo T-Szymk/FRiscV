@@ -92,7 +92,7 @@ module alu_tb #(
       endcase;
 
     end
-    $display("Simulation Complete!");
+    $info("Simulation Complete!");
     $finish;
   end
 
