@@ -13,6 +13,7 @@
  * module.
  * Based on the Xilinx Simple Dual Port Single Clock RAM language template.
  * TODO: Implement this using xilinx parameterised macros (XPMs)
+ * TODO: Implement byte-enable controls for writing to the memory
  ******************************************************************************/
 
 import friscv_pkg::*;
@@ -45,7 +46,6 @@ module sram_4k #(
   localparam ADDR_SHIFT_AMOUNT = $clog2(ARCH_BYTES);
 
   logic [RAM_WIDTH-1:0] sram_mem [RAM_DEPTH-1:0];
-  logic [RAM_WIDTH-1:0] ram_data = '0;
   logic [$clog2(RAM_DEPTH)-ADDR_SHIFT_AMOUNT-1:0] addr_a_word_s;
   logic [$clog2(RAM_DEPTH)-ADDR_SHIFT_AMOUNT-1:0] addr_b_word_s;
 
@@ -80,10 +80,7 @@ module sram_4k #(
     if (we_a_in)
       sram_mem[addr_a_word_s] <= din_a_in;
     if (en_b_in)
-      ram_data <= sram_mem[addr_b_word_s];
+      dout_b_out <= sram_mem[addr_b_word_s];
   end
-
-  // removed output registers
-  assign dout_b_out = ram_data;
 
 endmodule
