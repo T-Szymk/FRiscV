@@ -12,8 +12,8 @@
 import friscv_pkg::*;
  
 module alu_tb #(
-    parameter SIMULATION_RUNTIME = 100_000 // determine units from timescale or 
-  );                                       // timeunit
+  parameter SIMULATION_RUNTIME = 100_000 // determine units from timescale or 
+);                                       // timeunit
   
   timeunit 1ns/1ps;
 
