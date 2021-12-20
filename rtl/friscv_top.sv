@@ -25,12 +25,12 @@ module friscv_top #(
 
 logic [ARCH-1:0] pc_a_s, pc_int_s, read_addr_s, instr_s, src_a_s, rd_2_s, 
                  src_b_s, alu_result_s, data_mem_s, reg_write_data_s;
-signed logic [ARCH-1:0] imm_ext_s;
+logic signed [ARCH-1:0] imm_ext_s;
 
 /* COMPONENTS *****************************************************************/
 
 
-assign imm_ext_s = instr_s[31:7];
+assign imm_ext_s = signed'(instr_s[31:7]); // cast to signed to sign-extend
 assign pc_a_s = read_addr_s + imm_ext_s;
 
 // pc source mux
