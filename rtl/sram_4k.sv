@@ -11,7 +11,8 @@
  * The CPU is expecting the memory to be byte addressable, but the BRAM will be 
  * word addressable. Therefore address conversion logic is implemented in this 
  * module.
- * Based on the Xilinx Simple Dual Port Single Clock RAM language template.
+ * Based on the RAM example in H/H (async read and sync write)
+ * TODO: Modify this to use BRAM after pipelining is implemented
  * TODO: Implement this using xilinx parameterised macros (XPMs)
  * TODO: Implement byte-enable controls for writing to the memory
  ******************************************************************************/
@@ -29,7 +30,6 @@ module sram_4k #(
   input  logic [$clog2(RAM_DEPTH)-1:0] addr_b_byte_in, // Rd addr byte aligned 
   input  logic [RAM_WIDTH-1:0] din_a_in,               // RAM input data
   input  logic we_a_in,                                // Write enable
-  input  logic en_b_in,                                // Read Enable
   
   output logic [RAM_WIDTH-1:0] dout_b_out              // RAM output data
 );
@@ -56,31 +56,27 @@ module sram_4k #(
   // The following code either initializes the memory values to a specified file
   // or to all zeros to match hardware
   generate
-    
     if (INIT_FILE != "") begin: use_init_file
-
       initial begin
         $readmemh(INIT_FILE, sram_mem, 0, RAM_DEPTH-1);
       end
-    
     end else begin: init_bram_to_zero
-      
       integer ram_index;
       initial begin
         for (ram_index = 0; ram_index < RAM_DEPTH; ram_index = ram_index + 1) begin
           sram_mem[ram_index] = '0;
         end
       end
-
     end
-
   endgenerate
-
+  
+  // synchronous write operations
   always_ff @(posedge clk) begin
-    if (we_a_in)
-      sram_mem[addr_a_word_s] <= din_a_in;
-    if (en_b_in)
-      dout_b_out <= sram_mem[addr_b_word_s];
+    if (we_a_in) begin
+      sram_mem[addr_a_word_s] <= din_a_in;  
+    end
   end
+  // asynchronous read
+  assign dout_b_out = sram_mem[addr_b_word_s];
 
 endmodule
