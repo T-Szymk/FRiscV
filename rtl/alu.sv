@@ -23,7 +23,7 @@ module alu (
   logic signed [ARCH-1:0] a_s, b_s, result_s;
 
   assign zero_out = (result_out == '0) ? 1 : '0; // zero out is 1'b1 when output is 0  
-  // assignmets to allow east sign extensions
+  // assignmets to allow sign extensions
   assign a_s = a_in;
   assign b_s = b_in;
   assign result_out = result_s;

@@ -25,12 +25,14 @@ module friscv_top #(
 
 logic [ARCH-1:0] pc_a_s, pc_int_s, read_addr_s, instr_s, src_a_s, rd_2_s, 
                  src_b_s, alu_result_s, data_mem_s, reg_write_data_s;
+logic [$clog2(REGFILE_DEPTH)-1:0] rs1_s, rs2_s, rd_s;
 logic signed [ARCH-1:0] imm_ext_s;
 
 /* COMPONENTS *****************************************************************/
 
 
-assign imm_ext_s = signed'(instr_s[31:7]); // cast to signed to sign-extend
+// PLACE THIS INTO DECODE MODULE 
+// assign imm_ext_s = signed'(instr_s[31:7]); // cast to signed to sign-extend
 assign pc_a_s = read_addr_s + imm_ext_s;
 
 // pc source mux
@@ -58,20 +60,33 @@ sram_4k #(
   .INIT_FILE(IMEM_INIT_FILE)
 ) i_imem (
   .clk(clk),
-  .addr_a_byte_in(), // not connected
+  .addr_a_byte_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
   .addr_b_byte_in(read_addr_s),
-  .din_a_in(), // not connected 
-  .we_a_in(), // not connected
+  .din_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
+  .we_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
   .dout_b_out(instr_s) 
+);
+
+// instruction decoder
+instr_decode i_instr_decode (
+  .instr_in(instr_s),
+  .op_code_out(), // not connected
+  .func3_out(), // not connected
+  .func7_out(), // not connected
+  .rs1_out(rs1_s),
+  .rs2_out(rs2_s),
+  .rd_out(rd_s),
+  .imm_out(imm_ext_s),
+  .alu_ctrl_out() // not connected
 );
 
 // register file
 reg_file i_reg_file (
   .clk(clk),
-  .we(),
-  .addr_w(instr_s[11:7]),
-  .addr_r1(instr_s[19:15]),
-  .addr_r2(instr_s[24:20]),
+  .we(), // not connected
+  .addr_w(rd_s),
+  .addr_r1(rs1_s),
+  .addr_r2(rs2_s),
   .data_w(reg_write_data_s),
   .data_r1(src_a_s),
   .data_r2(rd_2_s)
@@ -81,7 +96,7 @@ reg_file i_reg_file (
 mux_2_way #(
   .MUX_WIDTH(ARCH)
 ) i_alu_src_mux (
-  .sel_in(),
+  .sel_in(), // not connected
   .a_in(rd_2_s),
   .b_in(imm_ext_s),
   .val_out(src_b_s)
@@ -89,11 +104,11 @@ mux_2_way #(
 
 // ALU
 alu i_alu (
-  .ctrl_in(),
+  .ctrl_in(), // not connected
   .a_in(src_a_s),
   .b_in(src_b_s),
   .result_out(alu_result_s),
-  .zero_out()
+  .zero_out() // not connected
 );
 
 // data memory
@@ -106,7 +121,7 @@ sram_4k #(
   .addr_a_byte_in(alu_result_s),
   .addr_b_byte_in(alu_result_s),
   .din_a_in(rd_2_s),
-  .we_a_in(),
+  .we_a_in(), // not connected
   .dout_b_out(data_mem_s) 
 );
 
@@ -114,7 +129,7 @@ sram_4k #(
 mux_2_way #(
   .MUX_WIDTH(ARCH)
 ) i_result_src_mux (
-  .sel_in(),
+  .sel_in(), // not connected
   .a_in(alu_result_s),
   .b_in(data_mem_s),
   .val_out(reg_write_data_s)

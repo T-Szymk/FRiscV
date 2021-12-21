@@ -19,6 +19,17 @@ package friscv_pkg;
   localparam IMEM_DEPTH_BYTES = 4096;
   localparam DMEM_DEPTH_BYTES = 4096; 
 
+  // Instruction Decode
+  enum logic [6:0] { REG       = 7'b0110011,
+                     IMM_ARITH = 7'b0010011,
+                     IMM_JUMP  = 7'b1100111,
+                     IMM_LOAD  = 7'b0000011,
+                     STORE     = 7'b0100011,
+                     BRANCH    = 7'b1100011,
+                     U_L_LOAD  = 7'b0110111,
+                     JUMP      = 7'b1101111
+                   } OPCODES;
+
   // ALU
   enum logic [3:0] { AND = 4'b0000,
                      OR  = 4'b0001,
