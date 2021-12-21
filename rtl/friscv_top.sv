@@ -2,7 +2,7 @@
  * Module   : friscv_top
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 20-Dec-2021
+ * Mod. Date: 21-Dec-2021
  *******************************************************************************
  * Description:
  * ============
@@ -91,6 +91,8 @@ reg_file i_reg_file (
   .data_r1(src_a_s),
   .data_r2(rd_2_s)
 );
+
+// INSERT MAIN CONTROLLER
 
 // ALU source mux
 mux_2_way #(
