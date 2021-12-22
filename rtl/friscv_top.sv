@@ -18,7 +18,11 @@ module friscv_top #(
   parameter DMEM_INIT_FILE = "dmem_init.mem" 
 ) (
   input logic clk,
-  input logic rst_n
+  input logic rst_n,
+
+  output logic [7-1:0] dbg_opcode_out,
+  output logic [7-1:0] dbg_func7_out,
+  output logic [3-1:0] dbg_func3_out
 );
 
 /* SIGNALS ********************************************************************/
@@ -49,6 +53,10 @@ module friscv_top #(
 
 /* COMPONENTS *****************************************************************/
   
+  assign dbg_opcode_out = op_code_s;
+  assign dbg_func3_out  = func3_s;
+  assign dbg_func7_out  = func7_s;
+
   // program counter
   pc i_pc (
     .clk(clk),
@@ -62,12 +70,12 @@ module friscv_top #(
   // instruction memory
   sram_4k #(
     .RAM_WIDTH(ARCH),
-    .RAM_DEPTH(IMEM_DEPTH),
+    .RAM_DEPTH(IMEM_DEPTH_BYTES),
     .INIT_FILE(IMEM_INIT_FILE)
   ) i_imem (
     .clk(clk),
     .addr_a_byte_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
-    .addr_b_byte_in(read_addr_s),
+    .addr_b_byte_in(read_addr_s[IMEM_ADDR_WIDTH-1:0]),
     .din_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
     .we_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
     .dout_b_out(instr_s) 
@@ -133,12 +141,12 @@ module friscv_top #(
   // data memory
   sram_4k #(
     .RAM_WIDTH(ARCH),
-    .RAM_DEPTH(DMEM_DEPTH),
+    .RAM_DEPTH(DMEM_DEPTH_BYTES),
     .INIT_FILE(DMEM_INIT_FILE)
-  ) i_imem (
+  ) i_dmem (
     .clk(clk),
-    .addr_a_byte_in(alu_result_s),
-    .addr_b_byte_in(alu_result_s),
+    .addr_a_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
+    .addr_b_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
     .din_a_in(rd_2_s),
     .we_a_in(mem_write_s),
     .dout_b_out(data_mem_s) 

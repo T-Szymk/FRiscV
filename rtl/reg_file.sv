@@ -16,9 +16,9 @@ module reg_file (
   
   input  logic clk,
   input  logic we,
-  input  logic [$clog2(REGFILE_DEPTH)-1:0] addr_w, 
-  input  logic [$clog2(REGFILE_DEPTH)-1:0] addr_r1, 
-  input  logic [$clog2(REGFILE_DEPTH)-1:0] addr_r2,
+  input  logic [REGFILE_ADDR_WIDTH-1:0] addr_w, 
+  input  logic [REGFILE_ADDR_WIDTH-1:0] addr_r1, 
+  input  logic [REGFILE_ADDR_WIDTH-1:0] addr_r2,
   input  logic [ARCH-1:0] data_w, // write-back data input
   
   output logic [ARCH-1:0] data_r1, 

@@ -17,11 +17,12 @@ module instr_decode (
   output logic [7-1:0] op_code_out, 
   output logic [3-1:0] func3_out,
   output logic [7-1:0] func7_out,
-  output logic [$clog2(REGFILE_DEPTH)-1:0] rs1_out, 
-  output logic [$clog2(REGFILE_DEPTH)-1:0] rs2_out, 
-  output logic [$clog2(REGFILE_DEPTH)-1:0] rd_out,
+  output logic [REGFILE_ADDR_WIDTH-1:0] rs1_out, 
+  output logic [REGFILE_ADDR_WIDTH-1:0] rs2_out, 
+  output logic [REGFILE_ADDR_WIDTH-1:0] rd_out,
   output logic [ARCH-1:0] imm_out
 );
+
   logic [3-1:0] func3_s;
   logic [7-1:0] op_code_s, 
               func7_s;
@@ -49,29 +50,32 @@ module instr_decode (
     func7_s = '0;
     imm_s   = '0;
 
-    case(op_code_s) begin
-      REG : // R-TYPE
-        rd_s    = instr_in[7:11];
+    case(op_code_s)
+      REG : begin // R-TYPE
+        rd_s    = instr_in[11:7];
         rs1_s   = instr_in[19:15];
         rs2_s   = instr_in[24:20];
         func3_s = instr_in[14:12];
         func7_s = instr_in[31:25];
         imm_s   = '0;
-      IMM_ARITH, IMM_JUMP, IMM_LOAD : // I-TYPE
-        rd_s    = instr_in[7:11];
+      end
+      IMM_ARITH, IMM_JUMP, IMM_LOAD : begin // I-TYPE
+        rd_s    = instr_in[11:7];
         rs1_s   = instr_in[19:15];
         rs2_s   = '0;
         func3_s = instr_in[14:12];
         func7_s = '0;
         imm_s   = signed'(instr_in[31:20]);
-      STORE : // S-TYPE
+      end
+      STORE : begin // S-TYPE
         rd_s    = '0;
         rs1_s   = instr_in[19:15];
         rs2_s   = instr_in[24:20];
         func3_s = instr_in[14:12];
         func7_s = '0;
         imm_s   = signed'({instr_in[31:25], instr_in[11:7]});
-      BRANCH : // B-TYPE
+      end
+      BRANCH : begin // B-TYPE
         rd_s    = '0;
         rs1_s   = instr_in[19:15];
         rs2_s   = instr_in[24:20];
@@ -79,28 +83,32 @@ module instr_decode (
         func7_s = '0;
         imm_s   = signed'({instr_in[31], instr_in[7], 
                            instr_in[30:25], instr_in[11:8], 1'b0});
-      U_L_LOAD : // U-TYPE
-        rd_s    = instr_in[7:11];
+      end
+      U_L_LOAD : begin // U-TYPE
+        rd_s    = instr_in[11:7];
         rs1_s   = '0;
         rs2_s   = '0;
         func3_s = '0;
         func7_s = '0;
         imm_s   = signed'({instr_in[31:12], 12'b0});
-      JUMP : // J-TYPE
-        rd_s    = instr_in[7:11];
+      end
+      JUMP : begin // J-TYPE
+        rd_s    = instr_in[11:7];
         rs1_s   = '0;
         rs2_s   = '0;
         func3_s = '0;
         func7_s = '0;
         imm_s   = signed'({instr_in[31], instr_in[19:12], 
                            instr_in[20], instr_in[30:21], 1'b0});
-      default : // illegal opcode
+      end                    
+      default : begin // illegal opcode
         rd_s    = '0;
         rs1_s   = '0;
         rs2_s   = '0;
         func3_s = '0;
         func7_s = '0;
         imm_s   = '0;
+      end
     endcase
 
   end : main_decoder_logic

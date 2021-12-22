@@ -36,14 +36,14 @@ always_comb begin : main_control
   mem_write_out  = '0;
   result_src_out = '0;
   
-  case(op_code_in) begin // opcode
+  case(op_code_in) // opcode
 
-    REG : // R-TYPE ------------------------------------------------------------
+    REG : begin // R-TYPE ------------------------------------------------------------
 
       pc_src_out    = 1'b1;
       reg_write_out = 1'b1; 
 
-      case (func3_in) begin // r-type func3 
+      case (func3_in) // r-type func3 
         0 : 
           /* Use if else at the moment whilst supporting a subset of 
              RV32I. Change this to a case when more instr are introduced */
@@ -54,62 +54,62 @@ always_comb begin : main_control
             alu_ctrl_out = SUB;
           end 
       endcase // r-type func3
-
-    IMM_ARITH : // I-TYPE (arithmetic) ----------------------------------------- 
+    end
+    IMM_ARITH : begin // I-TYPE (arithmetic) ----------------------------------------- 
 
       pc_src_out    = 1'b1;
       reg_write_out = 1'b1;
       alu_src_out   = 1'b1; 
-
-      case (func3_in) begin // I-type arith func3
+    
+      case (func3_in) // I-type arith func3
         0 : 
           alu_ctrl_out = ADD; 
       endcase // I-type arith func3
 
     // IMM_JUMP : // I-TYPE (jump) INTRODUCE ONCE RELEVANT INSTRUCTIONS ARE ADDED
-
-    IMM_LOAD : // I-TYPE (load) ------------------------------------------------
+    end
+    IMM_LOAD : begin // I-TYPE (load) ------------------------------------------------
       
       pc_src_out     = 1'b1;
       reg_write_out  = 1'b1;
       alu_src_out    = 1'b1; 
       result_src_out = 2'b01;
 
-      case (func3_in) begin // I-type load func3
+      case (func3_in) // I-type load func3
         2 : // load word
           alu_ctrl_out = ADD;
       endcase // I-type load func3
-
-    STORE : // S-TYPE ----------------------------------------------------------
+    end
+    STORE : begin // S-TYPE ----------------------------------------------------------
     
       pc_src_out     = 1'b1;
       alu_src_out    = 1'b1;
       mem_write_out  = 1'b1; 
 
-      case (func3_in) begin // S-type func3
+      case (func3_in) // S-type func3
         2 : // store word
           alu_ctrl_out = ADD;
       endcase // S-type func3
-
-    BRANCH : // B-TYPE ---------------------------------------------------------
+    end
+    BRANCH : begin // B-TYPE ---------------------------------------------------------
 
       pc_src_out = zero_in ? 1'b1 : '0; 
 
-      case (func3_in) begin // B-type func3
+      case (func3_in) // B-type func3
         0 : // beq
           alu_ctrl_out = SUB;
       endcase // B-type  func3
 
     // U_L_LOAD : // U-TYPE INTRODUCE ONCE RELEVANT INSTRUCTIONS ARE ADDED
-
-    JUMP : // J-TYPE -----------------------------------------------------------
+    end
+    JUMP : begin // J-TYPE -----------------------------------------------------------
       
       reg_write_out  = 1'b1;
       alu_src_out    = 1'b1;
       result_src_out = 2'b10;
       alu_ctrl_out   = ADD;
-
-    default : // DEFAULT -------------------------------------------------------
+    end
+    default : begin // DEFAULT -------------------------------------------------------
     
       pc_src_out     = '0;
       reg_write_out  = '0;
@@ -117,7 +117,7 @@ always_comb begin : main_control
       alu_ctrl_out   = '0;
       mem_write_out  = '0;
       result_src_out = '0;
-
+    end
   endcase  // opcode
 
 end : main_control
