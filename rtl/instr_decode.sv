@@ -20,8 +20,7 @@ module instr_decode (
   output logic [$clog2(REGFILE_DEPTH)-1:0] rs1_out, 
   output logic [$clog2(REGFILE_DEPTH)-1:0] rs2_out, 
   output logic [$clog2(REGFILE_DEPTH)-1:0] rd_out,
-  output logic [ARCH-1:0] imm_out,
-  output logic [3:0] alu_ctrl_out
+  output logic [ARCH-1:0] imm_out
 );
   logic [2:0] func3_s;
   logic [6:0] op_code_s, func7_s;
@@ -37,9 +36,6 @@ module instr_decode (
   assign rs2_out = rs2_s;
   assign rd_out  = rd_s;
   assign imm_out = imm_s;
-
-  // INSERT ALU DECODER
-  // ALU decoder will take opcode, funcs and immediate, returning ALU control signals
 
   always_comb begin : main_decoder_logic
 
