@@ -13,7 +13,7 @@
 import friscv_pkg::*;
 
 module alu (
-    input  logic [3:0] ctrl_in,
+    input  logic [4-1:0] ctrl_in,
     input  logic [ARCH-1:0] a_in,
     input  logic [ARCH-1:0] b_in,
     output logic [ARCH-1:0] result_out,

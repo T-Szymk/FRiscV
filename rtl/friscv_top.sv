@@ -22,7 +22,7 @@ module friscv_top #(
 );
 
 /* SIGNALS ********************************************************************/
-
+  
   logic [ARCH-1:0] pc_word_incr_s,
                    read_addr_s,
                    instr_s, 
@@ -32,6 +32,16 @@ module friscv_top #(
                    alu_result_s, 
                    data_mem_s, 
                    reg_write_data_s;
+  logic zero_s,
+        pc_src_s,
+        reg_write_s,
+        alu_src_s,
+        mem_write_s;
+  logic [2-1:0] result_src_s;
+  logic [4-1:0] alu_ctrl_s;
+  logic [3-1:0] func3_s;
+  logic [7-1:0] op_code_s,
+                func7_s;                   
   logic [$clog2(REGFILE_DEPTH)-1:0] rs1_s, 
                                     rs2_s, 
                                     rd_s;
@@ -43,6 +53,7 @@ module friscv_top #(
   pc i_pc (
     .clk(clk),
     .rst_n(rst_n),
+    .pc_src_in(pc_src_s),
     .imm_in(imm_ext_s),
     .pc_word_incr_out(pc_word_incr_s),
     .pc_out(read_addr_s)
@@ -65,19 +76,33 @@ module friscv_top #(
   // instruction decoder
   instr_decode i_instr_decode (
     .instr_in(instr_s),
-    .op_code_out(), // not connected
-    .func3_out(), // not connected
-    .func7_out(), // not connected
+    .op_code_out(op_code_s), 
+    .func3_out(func3_s),
+    .func7_out(func7_s),
     .rs1_out(rs1_s),
     .rs2_out(rs2_s),
     .rd_out(rd_s),
     .imm_out(imm_ext_s)
   );
   
+  // main controller
+  main_controller i_main_controller (
+    .func3_in(func3_s),
+    .func7_in(func7_s),
+    .op_code_in(op_code_s),
+    .zero_in(zero_s),
+    .pc_src_out(pc_src_s),
+    .reg_write_out(reg_write_s),
+    .alu_src_out(alu_src_s),
+    .alu_ctrl_out(alu_ctrl_s),
+    .mem_write_out(mem_write_s),
+    .result_src_out(result_src_s)
+  );
+
   // register file
   reg_file i_reg_file (
     .clk(clk),
-    .we(), // not connected
+    .we(reg_write_s),
     .addr_w(rd_s),
     .addr_r1(rs1_s),
     .addr_r2(rs2_s),
@@ -86,13 +111,11 @@ module friscv_top #(
     .data_r2(rd_2_s)
   );
   
-  // INSERT MAIN CONTROLLER
-  
   // ALU source mux
   mux_2_way #(
     .MUX_WIDTH(ARCH)
   ) i_alu_src_mux (
-    .sel_in(), // not connected
+    .sel_in(alu_src_s),
     .a_in(rd_2_s),
     .b_in(imm_ext_s),
     .val_out(src_b_s)
@@ -100,11 +123,11 @@ module friscv_top #(
   
   // ALU
   alu i_alu (
-    .ctrl_in(), // not connected
+    .ctrl_in(alu_ctrl_s),
     .a_in(src_a_s),
     .b_in(src_b_s),
     .result_out(alu_result_s),
-    .zero_out() // not connected
+    .zero_out(zero_s)
   );
   
   // data memory
@@ -117,7 +140,7 @@ module friscv_top #(
     .addr_a_byte_in(alu_result_s),
     .addr_b_byte_in(alu_result_s),
     .din_a_in(rd_2_s),
-    .we_a_in(), // not connected
+    .we_a_in(mem_write_s),
     .dout_b_out(data_mem_s) 
   );
   
@@ -125,11 +148,11 @@ module friscv_top #(
   mux_4_way #(
     .MUX_WIDTH(ARCH)
   ) i_result_src_mux (
-    .sel_in(), // not connected
+    .sel_in(result_src_s),
     .a_in(alu_result_s),
     .b_in(data_mem_s),
     .c_in(pc_word_incr_s),
-    .d_in(), // KEEP DISCONNECTED
+    .d_in(), // KEEP DISCONNECTED AS UNUSED
     .val_out(reg_write_data_s)
   );
 

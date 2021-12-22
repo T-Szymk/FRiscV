@@ -14,17 +14,20 @@ import friscv_pkg::*;
 module instr_decode (
   input  logic [ARCH-1:0] instr_in,
   
-  output logic [6:0] op_code_out, 
-  output logic [2:0] func3_out,
-  output logic [6:0] func7_out,
+  output logic [7-1:0] op_code_out, 
+  output logic [3-1:0] func3_out,
+  output logic [7-1:0] func7_out,
   output logic [$clog2(REGFILE_DEPTH)-1:0] rs1_out, 
   output logic [$clog2(REGFILE_DEPTH)-1:0] rs2_out, 
   output logic [$clog2(REGFILE_DEPTH)-1:0] rd_out,
   output logic [ARCH-1:0] imm_out
 );
-  logic [2:0] func3_s;
-  logic [6:0] op_code_s, func7_s;
-  logic [$clog2(REGFILE_DEPTH)-1:0] rs1_s, rs2_s, rd_s;
+  logic [3-1:0] func3_s;
+  logic [7-1:0] op_code_s, 
+              func7_s;
+  logic [$clog2(REGFILE_DEPTH)-1:0] rs1_s, 
+                                    rs2_s, 
+                                    rd_s;
   logic signed [ARCH-1:0] imm_s;
   
   
@@ -75,14 +78,14 @@ module instr_decode (
         func3_s = instr_in[14:12];
         func7_s = '0;
         imm_s   = signed'({instr_in[31], instr_in[7], 
-                           instr_in[30:25], instr_in[11:7]});
+                           instr_in[30:25], instr_in[11:8], 1'b0});
       U_L_LOAD : // U-TYPE
         rd_s    = instr_in[7:11];
         rs1_s   = '0;
         rs2_s   = '0;
         func3_s = '0;
         func7_s = '0;
-        imm_s   = signed'({instr_in[31:12]});
+        imm_s   = signed'({instr_in[31:12], 12'b0});
       JUMP : // J-TYPE
         rd_s    = instr_in[7:11];
         rs1_s   = '0;
@@ -90,7 +93,7 @@ module instr_decode (
         func3_s = '0;
         func7_s = '0;
         imm_s   = signed'({instr_in[31], instr_in[19:12], 
-                           instr_in[20], instr_in[30:21]});
+                           instr_in[20], instr_in[30:21], 1'b0});
       default : // illegal opcode
         rd_s    = '0;
         rs1_s   = '0;
