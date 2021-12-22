@@ -23,7 +23,8 @@ module friscv_top #(
 
 /* SIGNALS ********************************************************************/
 
-  logic [ARCH-1:0] read_addr_s,
+  logic [ARCH-1:0] pc_word_incr_s,
+                   read_addr_s,
                    instr_s, 
                    src_a_s, 
                    rd_2_s, 
@@ -43,6 +44,7 @@ module friscv_top #(
     .clk(clk),
     .rst_n(rst_n),
     .imm_in(imm_ext_s),
+    .pc_word_incr_out(pc_word_incr_s),
     .pc_out(read_addr_s)
   );
   
@@ -120,12 +122,14 @@ module friscv_top #(
   );
   
   // result source mux
-  mux_2_way #(
+  mux_4_way #(
     .MUX_WIDTH(ARCH)
   ) i_result_src_mux (
     .sel_in(), // not connected
     .a_in(alu_result_s),
     .b_in(data_mem_s),
+    .c_in(pc_word_incr_s),
+    .d_in(), // KEEP DISCONNECTED
     .val_out(reg_write_data_s)
   );
 

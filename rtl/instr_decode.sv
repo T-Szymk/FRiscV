@@ -2,11 +2,11 @@
  * Module   : instr_decode
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 21-Dec-2021
+ * Mod. Date: 22-Dec-2021
  *******************************************************************************
  * Description:
  * ============
- * Module to contain the logic to decode instructions
+ * Module containing the logic to decode instructions into components
  ******************************************************************************/
 
 import friscv_pkg::*;
@@ -38,6 +38,13 @@ module instr_decode (
   assign imm_out = imm_s;
 
   always_comb begin : main_decoder_logic
+
+    rd_s    = '0;
+    rs1_s   = '0;
+    rs2_s   = '0;
+    func3_s = '0;
+    func7_s = '0;
+    imm_s   = '0;
 
     case(op_code_s) begin
       REG : // R-TYPE
