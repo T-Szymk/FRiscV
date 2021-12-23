@@ -113,6 +113,7 @@ module friscv_top #(
     .func7_in(func7_s),
     .op_code_in(op_code_s),
     .zero_in(zero_s),
+    .lt_in(alu_result_s[0]),
     .pc_src_out(pc_src_decode_s),
     .jump_src_out(jump_src_s),
     .reg_write_out(reg_write_s),

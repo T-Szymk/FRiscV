@@ -17,6 +17,7 @@ module main_controller (
   input  logic [7-1:0] func7_in,
   input  logic [7-1:0] op_code_in,
   input  logic zero_in,
+  input  logic lt_in,
 
   output logic pc_src_out,
   output logic jump_src_out,
@@ -120,11 +121,31 @@ always_comb begin : main_control
     end
     BRANCH : begin // B-TYPE ---------------------------------------------------------
 
-      pc_src_out = zero_in ? 1'b1 : '0; 
-
       case (func3_in) // B-type func3
-        0 : // beq
+        0 : begin // beq
           alu_ctrl_out = SUB;
+          pc_src_out = zero_in ? 1'b1 : '0;
+        end
+        1 : begin // bne
+          alu_ctrl_out = SUB;
+          pc_src_out = !(zero_in) ? 1'b1 : '0;
+        end 
+        4 : begin // blt
+          alu_ctrl_out = SLT;
+          pc_src_out = lt_in ? 1'b1 : '0;
+        end
+        5 : begin // bge
+          alu_ctrl_out = SLT;
+          pc_src_out = !(lt_in) ? 1'b1 : '0;
+        end
+        6 : begin // bltu
+          alu_ctrl_out = SLTU;
+          pc_src_out = lt_in ? 1'b1 : '0;
+        end
+        7 : begin // bgeu
+          alu_ctrl_out = SLTU;
+          pc_src_out = !(lt_in) ? 1'b1 : '0;
+        end
       endcase // B-type  func3
 
     // U_L_LOAD : // U-TYPE INTRODUCE ONCE RELEVANT INSTRUCTIONS ARE ADDED

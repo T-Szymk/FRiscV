@@ -30,6 +30,7 @@ module alu (
 
   // main operation of ALU
   always_comb begin
+
     case (ctrl_in)
 
     	AND : 
@@ -47,8 +48,9 @@ module alu (
     	SUB : 
     	  result_s = a_s - b_s;
 
-    	SLT : 
+    	SLT :
     	  result_s = a_s < b_s;
+
       /* Note that for shift instructions, only lowest bits of immediate value 
          are used (as per the RISC-V spec.) */
     	SLL : 
