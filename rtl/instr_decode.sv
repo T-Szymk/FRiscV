@@ -65,14 +65,8 @@ module instr_decode (
         rs2_s   = '0;
         func3_s = instr_in[14:12];
         func7_s = '0;
-        // sign-extend immediate depending on func3 vals (SLT or SLTU)
-        if (instr_in[14:12] == 3'd3) begin
-          imm_s = unsigned'(instr_in[31:20]);
-        end
-        else begin 
-          imm_s = signed'(instr_in[31:20]);
-        end
-
+        // immediate always sign-extended
+        imm_s = signed'(instr_in[31:20]);
       end
       IMM_JUMP : begin // I-TYPE (jump)
         rd_s    = instr_in[11:7];
@@ -88,13 +82,7 @@ module instr_decode (
         rs2_s   = '0;
         func3_s = instr_in[14:12];
         func7_s = '0;
-        // sign-extend immediate depending on func3 vals (LBU or LHU)
-        if (instr_in[14] == 1'b1) begin
-          imm_s = unsigned'(instr_in[31:20]);
-        end
-        else begin 
-          imm_s = signed'(instr_in[31:20]);
-        end
+        imm_s = signed'(instr_in[31:20]);
       end
       STORE : begin // S-TYPE
         rd_s    = '0;
@@ -110,16 +98,8 @@ module instr_decode (
         rs2_s   = instr_in[24:20];
         func3_s = instr_in[14:12];
         func7_s = '0;
-        // sign-extend immediate depending on func3 vals (BLTU or BGEU)
-        if (instr_in[14:13] == 2'b11) begin
-          imm_s   = unsigned'({instr_in[31], instr_in[7], 
-                               instr_in[30:25], instr_in[11:8], 1'b0});
-        end
-        else begin 
-          imm_s   = signed'({instr_in[31], instr_in[7], 
-                             instr_in[30:25], instr_in[11:8], 1'b0});
-        end
-        
+        imm_s   = signed'({instr_in[31], instr_in[7], 
+                           instr_in[30:25], instr_in[11:8], 1'b0});
       end
       U_L_LOAD : begin // U-TYPE
         rd_s    = instr_in[11:7];

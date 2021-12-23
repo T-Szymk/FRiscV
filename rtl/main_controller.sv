@@ -20,7 +20,7 @@ module main_controller (
 
   output logic pc_src_out,
   output logic reg_write_out,
-  output logic alu_src_out
+  output logic alu_src_out,
   output logic [4-1:0] alu_ctrl_out,
   output logic mem_write_out,
   output logic [2-1:0] result_src_out
@@ -36,14 +36,14 @@ always_comb begin : main_control
   mem_write_out  = '0;
   result_src_out = '0;
   
-  case(op_code_in) // opcode
+  unique case(op_code_in) // opcode
 
     REG : begin // R-TYPE ------------------------------------------------------------
 
       pc_src_out    = 1'b1;
       reg_write_out = 1'b1; 
 
-      case (func3_in) // r-type func3 
+      unique case (func3_in) // r-type func3 
         0 : 
           /* Use if else at the moment whilst supporting a subset of 
              RV32I. Change this to a case when more instr are introduced */
@@ -58,7 +58,20 @@ always_comb begin : main_control
         2 :
           alu_ctrl_out = SLT;
         3 :
-
+          alu_ctrl_out = SLTU;
+        4 : 
+          alu_ctrl_out = XOR;
+        5 : 
+          if ( func7_in[5] == 1'b0 ) begin
+            alu_ctrl_out = SLR;
+          end
+          else begin
+            alu_ctrl_out = SAR;
+          end
+        6 : 
+          alu_ctrl_out = OR;
+        7 : 
+          alu_ctrl_out = AND;
 
       endcase // r-type func3
     end

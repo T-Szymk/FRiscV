@@ -60,6 +60,9 @@ module alu (
     	SLR :
     	  result_s = a_s >>  unsigned'(b_s[4:0]);
 
+      SLTU :
+        result_s = a_s <  unsigned'(b_s);
+
     	default : result_s = '0;
   
     endcase // ctrl_in
