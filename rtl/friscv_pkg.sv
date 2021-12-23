@@ -39,6 +39,7 @@ package friscv_pkg;
                      STORE     = 7'b0100011,
                      BRANCH    = 7'b1100011,
                      U_L_LOAD  = 7'b0110111,
+                     U_AUIPC   = 7'b0010111,
                      JUMP      = 7'b1101111
                    } OPCODES;
 

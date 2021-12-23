@@ -27,7 +27,7 @@ module friscv_top #(
 
 /* SIGNALS ********************************************************************/
   
-  logic [ARCH-1:0] pc_word_incr_s,
+  logic [ARCH-1:0] pc_incr_s,
                    read_addr_s,
                    instr_s, 
                    src_a_s, 
@@ -44,7 +44,8 @@ module friscv_top #(
         jump_src_s,
         reg_write_s,
         alu_src_s,
-        mem_write_s;
+        mem_write_s,
+        auipc_s;
   logic [2-1:0] result_src_s;
   logic [4-1:0] alu_ctrl_s;
   logic [3-1:0] func3_s;
@@ -65,9 +66,10 @@ module friscv_top #(
   pc i_pc (
     .clk(clk),
     .rst_n(rst_n),
+    .auipc_in(auipc_s),
     .pc_src_in(pc_src_s),
     .imm_in(imm_ext_s),
-    .pc_word_incr_out(pc_word_incr_s),
+    .pc_incr_out(pc_incr_s),
     .pc_out(read_addr_s)
   );
   
@@ -117,6 +119,7 @@ module friscv_top #(
     .pc_src_out(pc_src_decode_s),
     .jump_src_out(jump_src_s),
     .reg_write_out(reg_write_s),
+    .auipc_out(auipc_s),
     .alu_src_out(alu_src_s),
     .alu_ctrl_out(alu_ctrl_s),
     .mem_write_out(mem_write_s),
@@ -185,7 +188,7 @@ module friscv_top #(
     .sel_in(result_src_s),
     .a_in(alu_result_s),
     .b_in(data_mem_s),
-    .c_in(pc_word_incr_s),
+    .c_in(pc_incr_s),
     .d_in(), // KEEP DISCONNECTED AS UNUSED
     .val_out(write_result_s)
   );

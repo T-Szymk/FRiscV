@@ -23,6 +23,7 @@ module main_controller (
   output logic jump_src_out,
   output logic reg_write_out,
   output logic alu_src_out,
+  output logic auipc_out,
   output logic [4-1:0] alu_ctrl_out,
   output logic mem_write_out,
   output logic [2-1:0] result_src_out
@@ -35,6 +36,7 @@ always_comb begin : main_control
   jump_src_out   = '0;
   reg_write_out  = '0;
   alu_src_out    = '0;
+  auipc_out      = '0;
   alu_ctrl_out   = '0;
   mem_write_out  = '0;
   result_src_out = '0;
@@ -65,6 +67,7 @@ always_comb begin : main_control
           alu_ctrl_out = AND;
       endcase // r-type func3
     end
+
     IMM_ARITH : begin // I-TYPE (arithmetic) ----------------------------------------- 
 
       pc_src_out    = 1'b1;
@@ -92,6 +95,7 @@ always_comb begin : main_control
           alu_ctrl_out = AND;
       endcase // I-type arith func3
     end
+
     IMM_JUMP : begin // I-TYPE (indirect jump JALR)
 
       pc_src_out     = 1'b1;
@@ -102,6 +106,7 @@ always_comb begin : main_control
       alu_ctrl_out   = ADD;
 
     end
+
     IMM_LOAD : begin // I-TYPE (load) ------------------------------------------------
       
       pc_src_out     = 1'b1;
@@ -111,6 +116,7 @@ always_comb begin : main_control
       alu_ctrl_out   = ADD;
 
     end
+
     STORE : begin // S-TYPE ----------------------------------------------------------
     
       pc_src_out     = 1'b1;
@@ -119,6 +125,7 @@ always_comb begin : main_control
       alu_ctrl_out   = ADD;
       
     end
+
     BRANCH : begin // B-TYPE ---------------------------------------------------------
 
       case (func3_in) // B-type func3
@@ -147,9 +154,22 @@ always_comb begin : main_control
           pc_src_out = !(lt_in) ? 1'b1 : '0;
         end
       endcase // B-type  func3
-
-    // U_L_LOAD : // U-TYPE INTRODUCE ONCE RELEVANT INSTRUCTIONS ARE ADDED
     end
+
+    U_L_LOAD : begin // U-TYPE 
+      pc_src_out     = 1'b1;
+      reg_write_out  = 1'b1;
+      alu_src_out    = 1'b1;
+    end
+
+    U_AUIPC : begin // U-TYPE 
+      pc_src_out     = 1'b1;
+      reg_write_out  = 1'b1;
+      alu_src_out    = 1'b1;
+      auipc_out      = 1'b1;
+      result_src_out = 2'b10;
+    end
+
     JUMP : begin // J-TYPE -----------------------------------------------------------
       
       reg_write_out  = 1'b1;
@@ -157,12 +177,14 @@ always_comb begin : main_control
       result_src_out = 2'b10;
       alu_ctrl_out   = ADD;
     end
+    
     default : begin // DEFAULT -------------------------------------------------------
     
       pc_src_out     = '0;
       jump_src_out   = '0;
       reg_write_out  = '0;
       alu_src_out    = '0;
+      auipc_out      = '0;
       alu_ctrl_out   = '0;
       mem_write_out  = '0;
       result_src_out = '0;
