@@ -2,7 +2,7 @@
  * Module   : main_controller
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 22-Dec-2021
+ * Mod. Date: 23-Dec-2021
  *******************************************************************************
  * Description:
  * ============
@@ -20,7 +20,7 @@ module main_controller (
 
   output logic pc_src_out,
   output logic reg_write_out,
-  output logic alu_src_out,
+  output logic alu_src_out
   output logic [4-1:0] alu_ctrl_out,
   output logic mem_write_out,
   output logic [2-1:0] result_src_out
@@ -47,12 +47,19 @@ always_comb begin : main_control
         0 : 
           /* Use if else at the moment whilst supporting a subset of 
              RV32I. Change this to a case when more instr are introduced */
-          if ( func7_in == 7'h0 ) begin 
+          if ( func7_in[5] == 1'b0 ) begin 
             alu_ctrl_out = ADD;
           end 
           else begin 
             alu_ctrl_out = SUB;
-          end 
+          end
+        1 :
+          alu_ctrl_out = SLL;
+        2 :
+          alu_ctrl_out = SLT;
+        3 :
+
+
       endcase // r-type func3
     end
     IMM_ARITH : begin // I-TYPE (arithmetic) ----------------------------------------- 

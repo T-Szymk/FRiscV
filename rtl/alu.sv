@@ -2,7 +2,7 @@
  * Module   : alu
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 18-Dec-2021
+ * Mod. Date: 23-Dec-2021
  *******************************************************************************
  * Description:
  * ============
@@ -24,32 +24,42 @@ module alu (
 
   assign zero_out = (result_out == '0) ? 1 : '0; // zero out is 1'b1 when output is 0  
   // assignmets to allow sign extensions
-  assign a_s = a_in;
-  assign b_s = b_in;
+  assign a_s = signed'(a_in);
+  assign b_s = signed'(b_in);
   assign result_out = result_s;
 
   // main operation of ALU
   always_comb begin
     case (ctrl_in)
 
-    	AND : // AND
+    	AND : 
     	  result_s = a_s & b_s;
-    	OR : // OR
+
+    	OR :
     	  result_s = a_s | b_s;
-    	XOR : // XOR
+
+    	XOR : 
     	  result_s = a_s ^ b_s;
-    	ADD : // ADD
+
+    	ADD : 
     	  result_s = a_s + b_s;
-    	SUB : // SUB
+
+    	SUB : 
     	  result_s = a_s - b_s;
-    	SLT : // SLT
+
+    	SLT : 
     	  result_s = a_s < b_s;
-    	SLL : // SLL
-    	  result_s = a_s << b_s;
-    	SAR : // SAR
-    	  result_s = a_s >>> b_s;
-    	SLR : // SLR
-    	  result_s = a_s >> b_s;
+      /* Note that for shift instructions, only lowest bits of immediate value 
+         are used (as per the RISC-V spec.) */
+    	SLL : 
+    	  result_s = a_s <<  unsigned'(b_s[4:0]);
+
+    	SAR :
+    	  result_s = a_s >>> unsigned'(b_s[4:0]);
+
+    	SLR :
+    	  result_s = a_s >>  unsigned'(b_s[4:0]);
+
     	default : result_s = '0;
   
     endcase // ctrl_in
