@@ -1,25 +1,32 @@
 /******************************************************************************* 
- * Module   : load_data_ext
+ * Module   : write_data_ext
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
  * Mod. Date: 23-Dec-2021
  *******************************************************************************
  * Description:
  * ============
- * Formats data returned from data memory depending on instructions used.
+ * Formats data returned from or delivered to data memory depending on 
+ * instructions used.
  ******************************************************************************/
 
 import friscv_pkg::*;
 
-module load_data_ext(
+module write_data_ext(
   input  logic [ARCH-1:0] w_data_in,
+  input  logic [ARCH-1:0] rd_data_in,
   input  logic [7-1:0] op_code_in,
   input  logic [3-1:0] func3_in,
 
-  output logic [ARCH-1:0] w_data_out
+  output logic [ARCH-1:0] w_data_out,
+  output logic [ARCH-1:0] rd_data_out
 );
 
 always_comb begin 
+
+    w_data_out  = w_data_in;
+  	rd_data_out = rd_data_in;
+  
   case (op_code_in)
     IMM_LOAD :
       case (func3_in)
@@ -36,9 +43,22 @@ always_comb begin
           default :
             w_data_out = w_data_in;
         endcase
-  	default : 
-		  w_data_out = w_data_in;
+    STORE : 
+      case (func3_in)
+      	0 : // store byte
+      	  rd_data_out = rd_data_in[7:0];
+      	1 : // store half word
+      	  rd_data_out = rd_data_in[15:0];
+      	2 : // store word
+      	  rd_data_out = rd_data_in[31:0];
+      	default :  
+      	  rd_data_out = rd_data_in;
+       endcase
+  	default : begin
+		  w_data_out  = w_data_in;
+		  rd_data_out = rd_data_in;
+    end
   endcase
 end
 
-endmodule // load_data_ext
+endmodule // write_data_ext

@@ -115,11 +115,8 @@ always_comb begin : main_control
       pc_src_out     = 1'b1;
       alu_src_out    = 1'b1;
       mem_write_out  = 1'b1; 
-
-      case (func3_in) // S-type func3
-        2 : // store word
-          alu_ctrl_out = ADD;
-      endcase // S-type func3
+      alu_ctrl_out   = ADD;
+      
     end
     BRANCH : begin // B-TYPE ---------------------------------------------------------
 

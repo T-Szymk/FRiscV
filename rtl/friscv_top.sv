@@ -31,7 +31,8 @@ module friscv_top #(
                    read_addr_s,
                    instr_s, 
                    src_a_s, 
-                   rd_2_s, 
+                   rd_2_s,
+                   w_data_s, 
                    src_b_s, 
                    alu_result_s, 
                    data_mem_s, 
@@ -133,12 +134,14 @@ module friscv_top #(
     .data_r2(rd_2_s)
   );
 
-  // load data sign extender
-  load_data_ext i_load_data_ext (
+  // write data sign extender
+  write_data_ext i_write_data_ext (
     .w_data_in(write_result_s),
+    .rd_data_in(rd_2_s),
     .op_code_in(op_code_s),
     .func3_in(func3_s),
     .w_data_out(reg_write_data_s),
+    .rd_data_out(w_data_s)
   );
   
   // ALU source mux
@@ -169,7 +172,7 @@ module friscv_top #(
     .clk(clk),
     .addr_a_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
     .addr_b_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
-    .din_a_in(rd_2_s),
+    .din_a_in(w_data_s),
     .we_a_in(mem_write_s),
     .dout_b_out(data_mem_s) 
   );
