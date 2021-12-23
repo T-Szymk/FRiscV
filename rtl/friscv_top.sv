@@ -133,7 +133,7 @@ module friscv_top #(
     .addr_w(rd_s),
     .addr_r1(rs1_s),
     .addr_r2(rs2_s),
-    .data_w(),
+    .data_w(reg_write_data_s),
     .data_r1(src_a_s),
     .data_r2(rd_2_s)
   );
