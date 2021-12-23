@@ -64,7 +64,11 @@ module instr_decode (
         rs1_s   = instr_in[19:15];
         rs2_s   = '0;
         func3_s = instr_in[14:12];
-        func7_s = '0;
+        /* 
+           note that immediate[11:5] has been passed into func7 to allow logic
+           to determine between SRL and SRA more easily within main controller 
+        */
+        func7_s = instr_in[31:25];
         // immediate always sign-extended
         imm_s = signed'(instr_in[31:20]);
       end

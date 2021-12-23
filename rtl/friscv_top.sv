@@ -2,7 +2,7 @@
  * Module   : friscv_top
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 22-Dec-2021
+ * Mod. Date: 23-Dec-2021
  *******************************************************************************
  * Description:
  * ============
@@ -35,7 +35,8 @@ module friscv_top #(
                    src_b_s, 
                    alu_result_s, 
                    data_mem_s, 
-                   reg_write_data_s;
+                   reg_write_data_s,
+                   write_result_s;
   logic zero_s,
         pc_src_s,
         reg_write_s,
@@ -114,9 +115,17 @@ module friscv_top #(
     .addr_w(rd_s),
     .addr_r1(rs1_s),
     .addr_r2(rs2_s),
-    .data_w(reg_write_data_s),
+    .data_w(),
     .data_r1(src_a_s),
     .data_r2(rd_2_s)
+  );
+
+  // load data sign extender
+  load_data_ext i_load_data_ext (
+    .w_data_in(write_result_s),
+    .op_code_in(op_code_s),
+    .func3_in(func3_s),
+    .w_data_out(reg_write_data_s),
   );
   
   // ALU source mux
@@ -161,7 +170,7 @@ module friscv_top #(
     .b_in(data_mem_s),
     .c_in(pc_word_incr_s),
     .d_in(), // KEEP DISCONNECTED AS UNUSED
-    .val_out(reg_write_data_s)
+    .val_out(write_result_s)
   );
 
 endmodule // friscv_top
