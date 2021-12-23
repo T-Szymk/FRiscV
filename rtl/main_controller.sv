@@ -19,6 +19,7 @@ module main_controller (
   input  logic zero_in,
 
   output logic pc_src_out,
+  output logic jump_src_out,
   output logic reg_write_out,
   output logic alu_src_out,
   output logic [4-1:0] alu_ctrl_out,
@@ -30,6 +31,7 @@ module main_controller (
 always_comb begin : main_control
 
   pc_src_out     = '0;
+  jump_src_out   = '0;
   reg_write_out  = '0;
   alu_src_out    = '0;
   alu_ctrl_out   = '0;
@@ -88,8 +90,16 @@ always_comb begin : main_control
         7 : 
           alu_ctrl_out = AND;
       endcase // I-type arith func3
+    end
+    IMM_JUMP : begin // I-TYPE (indirect jump JALR)
 
-    // IMM_JUMP : // I-TYPE (jump) INTRODUCE ONCE RELEVANT INSTRUCTIONS ARE ADDED
+      pc_src_out     = 1'b1;
+      jump_src_out   = 1'b1; // takes PC val from ALU output
+      reg_write_out  = 1'b1;
+      alu_src_out    = 1'b1; 
+      result_src_out = 2'b10;
+      alu_ctrl_out   = ADD;
+
     end
     IMM_LOAD : begin // I-TYPE (load) ------------------------------------------------
       
@@ -98,7 +108,7 @@ always_comb begin : main_control
       alu_src_out    = 1'b1; 
       result_src_out = 2'b01;
       alu_ctrl_out   = ADD;
-      
+
     end
     STORE : begin // S-TYPE ----------------------------------------------------------
     
@@ -132,6 +142,7 @@ always_comb begin : main_control
     default : begin // DEFAULT -------------------------------------------------------
     
       pc_src_out     = '0;
+      jump_src_out   = '0;
       reg_write_out  = '0;
       alu_src_out    = '0;
       alu_ctrl_out   = '0;

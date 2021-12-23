@@ -39,6 +39,8 @@ module friscv_top #(
                    write_result_s;
   logic zero_s,
         pc_src_s,
+        pc_src_decode_s,
+        jump_src_s,
         reg_write_s,
         alu_src_s,
         mem_write_s;
@@ -68,6 +70,16 @@ module friscv_top #(
     .pc_out(read_addr_s)
   );
   
+  // jump source mux
+  mux_2_way #(
+    .MUX_WIDTH(ARCH)
+  ) i_jmp_src_mux (
+    .sel_in(jump_src_s),
+    .a_in(pc_src_decode_s),
+    .b_in({alu_result_s[ARCH-1:1], 1'b0}), // sets LSB to 0 as per JALR in spec
+    .val_out(pc_src_s)
+  );
+
   // instruction memory
   sram_4k #(
     .RAM_WIDTH(ARCH),
@@ -100,7 +112,8 @@ module friscv_top #(
     .func7_in(func7_s),
     .op_code_in(op_code_s),
     .zero_in(zero_s),
-    .pc_src_out(pc_src_s),
+    .pc_src_out(pc_src_decode_s),
+    .jump_src_out(jump_src_s),
     .reg_write_out(reg_write_s),
     .alu_src_out(alu_src_s),
     .alu_ctrl_out(alu_ctrl_s),
