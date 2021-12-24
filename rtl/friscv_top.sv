@@ -2,23 +2,28 @@
  * Module   : friscv_top
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 23-Dec-2021
+ * Mod. Date: 24-Dec-2021
  *******************************************************************************
  * Description:
  * ============
- * Top wrapper for friscv CPU. Contains all components and connections.
+ * Top wrapper for friscv CPU. Contains all components and interfaces to
+ * external memory and clock/reset.
  ******************************************************************************/
 
 import friscv_pkg::*;
 
-module friscv_top #(
-  parameter IMEM_DEPTH     = 4096,
-  parameter DMEM_WIDTH     = 4096,
-  parameter IMEM_INIT_FILE = "imem_init.mem",
-  parameter DMEM_INIT_FILE = "dmem_init.mem" 
-) (
+module friscv_top (
   input logic clk,
   input logic rst_n,
+  
+  // memory interface inputs
+  input logic [ARCH-1:0] instr_in,
+  input logic [ARCH-1:0] data_mem_in,
+  // memory interface outputs
+  output logic [ARCH-1:0] read_addr_out,
+  output logic [ARCH-1:0] alu_result_out,
+  output logic [ARCH-1:0] w_data_out,
+  output logic mem_write_out,
 
   output logic [7-1:0] dbg_opcode_out,
   output logic [7-1:0] dbg_func7_out,
@@ -27,15 +32,11 @@ module friscv_top #(
 
 /* SIGNALS ********************************************************************/
   
-  logic [ARCH-1:0] pc_incr_s,
-                   read_addr_s,
-                   instr_s, 
+  logic [ARCH-1:0] pc_incr_s, 
                    src_a_s, 
-                   rd_2_s,
-                   w_data_s, 
+                   rd_2_s, 
                    src_b_s, 
                    alu_result_s, 
-                   data_mem_s, 
                    reg_write_data_s,
                    write_result_s;
   logic zero_s,
@@ -44,7 +45,6 @@ module friscv_top #(
         jump_src_s,
         reg_write_s,
         alu_src_s,
-        mem_write_s,
         auipc_s;
   logic [2-1:0] result_src_s;
   logic [4-1:0] alu_ctrl_s;
@@ -61,6 +61,7 @@ module friscv_top #(
   assign dbg_opcode_out = op_code_s;
   assign dbg_func3_out  = func3_s;
   assign dbg_func7_out  = func7_s;
+  assign alu_result_out = alu_result_s;
 
   // program counter
   pc i_pc (
@@ -70,7 +71,7 @@ module friscv_top #(
     .pc_src_in(pc_src_s),
     .imm_in(imm_ext_s),
     .pc_incr_out(pc_incr_s),
-    .pc_out(read_addr_s)
+    .pc_out(read_addr_out)
   );
   
   // jump source mux
@@ -82,24 +83,10 @@ module friscv_top #(
     .b_in({alu_result_s[ARCH-1:1], 1'b0}), // sets LSB to 0 as per JALR in spec
     .val_out(pc_src_s)
   );
-
-  // instruction memory
-  sram_4k #(
-    .RAM_WIDTH(ARCH),
-    .RAM_DEPTH(IMEM_DEPTH_BYTES),
-    .INIT_FILE(IMEM_INIT_FILE)
-  ) i_imem (
-    .clk(clk),
-    .addr_a_byte_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
-    .addr_b_byte_in(read_addr_s[IMEM_ADDR_WIDTH-1:0]),
-    .din_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
-    .we_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
-    .dout_b_out(instr_s) 
-  );
   
   // instruction decoder
   instr_decode i_instr_decode (
-    .instr_in(instr_s),
+    .instr_in(instr_in),
     .op_code_out(op_code_s), 
     .func3_out(func3_s),
     .func7_out(func7_s),
@@ -122,7 +109,7 @@ module friscv_top #(
     .auipc_out(auipc_s),
     .alu_src_out(alu_src_s),
     .alu_ctrl_out(alu_ctrl_s),
-    .mem_write_out(mem_write_s),
+    .mem_write_out(mem_write_out),
     .result_src_out(result_src_s)
   );
 
@@ -145,7 +132,7 @@ module friscv_top #(
     .op_code_in(op_code_s),
     .func3_in(func3_s),
     .w_data_out(reg_write_data_s),
-    .rd_data_out(w_data_s)
+    .rd_data_out(w_data_out)
   );
   
   // ALU source mux
@@ -167,27 +154,13 @@ module friscv_top #(
     .zero_out(zero_s)
   );
   
-  // data memory
-  sram_4k #(
-    .RAM_WIDTH(ARCH),
-    .RAM_DEPTH(DMEM_DEPTH_BYTES),
-    .INIT_FILE(DMEM_INIT_FILE)
-  ) i_dmem (
-    .clk(clk),
-    .addr_a_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
-    .addr_b_byte_in(alu_result_s[DMEM_ADDR_WIDTH-1:0]),
-    .din_a_in(w_data_s),
-    .we_a_in(mem_write_s),
-    .dout_b_out(data_mem_s) 
-  );
-  
   // result source mux
   mux_4_way #(
     .MUX_WIDTH(ARCH)
   ) i_result_src_mux (
     .sel_in(result_src_s),
     .a_in(alu_result_s),
-    .b_in(data_mem_s),
+    .b_in(data_mem_in),
     .c_in(pc_incr_s),
     .d_in(), // KEEP DISCONNECTED AS UNUSED
     .val_out(write_result_s)
