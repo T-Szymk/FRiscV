@@ -38,7 +38,8 @@ module friscv_top (
                    src_b_s, 
                    alu_result_s, 
                    reg_write_data_s,
-                   write_result_s;
+                   write_result_s,
+                   j_src_mux_s;
   logic zero_s,
         pc_src_s,
         pc_src_decode_s,
@@ -69,7 +70,7 @@ module friscv_top (
     .rst_n(rst_n),
     .auipc_in(auipc_s),
     .pc_src_in(pc_src_s),
-    .imm_in(imm_ext_s),
+    .imm_in(j_src_mux_s),
     .pc_incr_out(pc_incr_s),
     .pc_out(read_addr_out)
   );
@@ -79,9 +80,9 @@ module friscv_top (
     .MUX_WIDTH(ARCH)
   ) i_jmp_src_mux (
     .sel_in(jump_src_s),
-    .a_in(pc_src_decode_s),
+    .a_in(imm_ext_s),
     .b_in({alu_result_s[ARCH-1:1], 1'b0}), // sets LSB to 0 as per JALR in spec
-    .val_out(pc_src_s)
+    .val_out(j_src_mux_s)
   );
   
   // instruction decoder
