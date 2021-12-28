@@ -1,17 +1,17 @@
 
 set FRISCV_SC_RTL_FILES " \
-../rtl/alu.sv \
-../rtl/friscv_fpga_wrapper.sv \
-../rtl/friscv_pkg.sv \
-../rtl/friscv_top.sv \
-../rtl/instr_decode.sv \
-../rtl/main_controller.sv \
-../rtl/mux_2_way.sv \
-../rtl/mux_4_way.sv \
-../rtl/pc.sv \
-../rtl/reg_file.sv \
-../rtl/sram_4k.sv \
-../rtl/write_data_ext.sv \
+../rtl/single_cycle/alu.sv \
+../rtl/single_cycle/friscv_fpga_wrapper.sv \
+../rtl/single_cycle/friscv_pkg.sv \
+../rtl/single_cycle/friscv_top.sv \
+../rtl/single_cycle/instr_decode.sv \
+../rtl/single_cycle/main_controller.sv \
+../rtl/single_cycle/mux_2_way.sv \
+../rtl/single_cycle/mux_4_way.sv \
+../rtl/single_cycle/pc.sv \
+../rtl/single_cycle/reg_file.sv \
+../rtl/single_cycle/sram_4k.sv \
+../rtl/single_cycle/write_data_ext.sv \
 "
 
 set FRISCV_SC_TB_FILES  " \
