@@ -1,0 +1,5 @@
+# VHDL Files
+./rtl/pipelined/friscv_pkg.vhd
+./rtl/pipelined/mux_2_way.vhd
+./rtl/pipelined/pc_stage.vhd
+./rtl/pipelined/friscv_top.vhd

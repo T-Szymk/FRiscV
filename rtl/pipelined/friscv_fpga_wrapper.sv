@@ -11,8 +11,9 @@
 
 import friscv_sv_pkg::*;
 
-module friscv_fpga_wrapper #(
-  parameter SIM = 1
+module friscv_fpga_wrapper # (
+  parameter IMEM_INIT_FILE = "imem_init.mem",
+  parameter DMEM_INIT_FILE = "dmem_init.mem"
 ) (
   input logic clk,
   input logic rst_n
@@ -28,9 +29,6 @@ module friscv_fpga_wrapper #(
 
     `ifndef SIM // Synthesis or Vivado simulation //////////////////////////////
 
-      parameter IMEM_INIT_FILE = "imem_init.mem";
-      parameter DMEM_INIT_FILE = "dmem_init.mem";
-
       // clock generator
       clk_wiz_0 i_clk_wiz_0 (
        .clk_out1(clk_s),
@@ -39,9 +37,6 @@ module friscv_fpga_wrapper #(
       );
 
     `else  // For use with Modelsim/Questa /////////////////////////////////////
-
-      parameter IMEM_INIT_FILE = "./fpga/imem_init.mem";
-      parameter DMEM_INIT_FILE = "./fpga/dmem_init.mem";
 
       assign clk_s = clk;
 
@@ -56,8 +51,8 @@ module friscv_fpga_wrapper #(
     .clk(clk_s),
     .addr_a_byte_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
     .addr_b_byte_in(read_addr_s[IMEM_ADDR_WIDTH-1:0]),
-    .din_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
-    .we_a_in(), // KEEP DISCONNECTED AS INSTR MEM READ ONLY
+    .din_a_in(),       // KEEP DISCONNECTED AS INSTR MEM READ ONLY
+    .we_a_in(),        // KEEP DISCONNECTED AS INSTR MEM READ ONLY
     .dout_b_out(instr_s) 
   );
    

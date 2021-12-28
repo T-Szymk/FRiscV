@@ -1,0 +1,5 @@
+# SV Files
+./rtl/pipelined/friscv_sv_pkg.sv
+./rtl/pipelined/sram_4k.sv
+./rtl/pipelined/friscv_fpga_wrapper.sv
+./tb/friscv_pipelined_tb.sv
