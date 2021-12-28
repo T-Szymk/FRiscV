@@ -55,15 +55,15 @@ BEGIN -- ARCHITECTURE structural -----------------------------------------------
 
 -- COMPONENT INSTANCES --
 
--- program counter
-i_pc_stage : pc_stage
-  PORT MAP (
-    clk       => clk,        
-    rst_n     => rst_n,    
-    pc_sel_in => pc_sel_s,       
-    branch_in => branch_val_s,       
-    pc_out    => pc_val_s    
-  );
+  -- program counter
+  i_pc_stage : pc_stage
+    PORT MAP (
+      clk       => clk,        
+      rst_n     => rst_n,    
+      pc_sel_in => pc_sel_s,       
+      branch_in => branch_val_s,       
+      pc_out    => pc_val_s    
+    );
 
 END structural;
 --******************************************************************************
