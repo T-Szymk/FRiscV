@@ -26,7 +26,7 @@ module friscv_fpga_wrapper #(
                    data_mem_s,
                    w_data_s;
 
-    `ifndef SIM // Synthesis or Vivado simulation 
+    `ifndef SIM // Synthesis or Vivado simulation //////////////////////////////
 
       parameter IMEM_INIT_FILE = "imem_init.mem";
       parameter DMEM_INIT_FILE = "dmem_init.mem";
@@ -38,14 +38,14 @@ module friscv_fpga_wrapper #(
        .clk_in1(clk)
       );
 
-    `else  // For use with Modelsim/Questa
+    `else  // For use with Modelsim/Questa /////////////////////////////////////
 
       parameter IMEM_INIT_FILE = "./fpga/imem_init.mem";
       parameter DMEM_INIT_FILE = "./fpga/dmem_init.mem";
 
       assign clk_s = clk;
 
-    `endif
+    `endif // SIM //////////////////////////////////////////////////////////////
   
   // instruction memory
   sram_4k #(
