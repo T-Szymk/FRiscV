@@ -26,13 +26,13 @@ set FRISCV_SC_CONSTRAINTS "\
 "
 
 # Pipelined design files
-
+# system verilog files
 set FRISCV_PIPE_SV_RTL_FILES " \
   ../rtl/pipelined/friscv_sv_pkg.sv \
   ../rtl/pipelined/sram_4k.sv \
   ../rtl/pipelined/friscv_fpga_wrapper.sv \
 "
-
+# VHDL files
 set FRISCV_PIPE_VHDL_RTL_FILES " \
   ../rtl/pipelined/friscv_pkg.vhd \
   ../rtl/pipelined/mux_2_way.vhd \
