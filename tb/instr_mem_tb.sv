@@ -46,20 +46,16 @@ module instr_mem_tb #(
     
     rst_n <= 1'b1;
     
-    for(int i = 0; i < 17; i++) begin
+    for(int i = 0; i < 65; i++) begin
       addr_dut <= i;
       @(negedge clk);
-      if(i == 0) begin 
-        assert (data_dut == '0) else
-          $error ("FAILED: Expecting data value of 0 after reset, but got %0h", data_dut);
-      end else if (i <= 15) begin
-        assert(data_dut == (i - 1)) else
+      if (i <= 63) begin
+        assert(data_dut == (i / 4)) else
           $error ("FAILED: Expecting data value of %0h from address, but got %0h", (i-1), addr_dut, data_dut);
       end else begin
         assert(data_dut == 'hDEADBEEF) else
           $error ("FAILED: Expecting data value of 0xDEADBEEF, but got %0h", data_dut);
       end
-
     end
     
     #5;
@@ -67,4 +63,8 @@ module instr_mem_tb #(
     $finish;
   end
  
-endmodule;
+  function int imod(int x, divisor);
+    return x - (divisor * (x / divisor));
+  endfunction // imod
+
+endmodule
