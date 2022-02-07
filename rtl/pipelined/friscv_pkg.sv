@@ -24,11 +24,11 @@ package friscv_pkg;
      addressed but this conversion takes place within the module. 
      The true RAM depth is defined by xMEM_DEPTH */
   localparam IMEM_DEPTH_BYTES = 4096;
-  localparam IMEM_DEPTH       = IMEM_DEPTH_BYTES / ARCH_BYTES;
+  localparam IMEM_DEPTH       = IMEM_DEPTH_BYTES / XLEN_BYTES;
   localparam IMEM_ADDR_WIDTH = $clog2(IMEM_DEPTH_BYTES);
   
   localparam DMEM_DEPTH_BYTES = 4096; 
-  localparam DMEM_DEPTH       = DMEM_DEPTH_BYTES / ARCH_BYTES;
+  localparam DMEM_DEPTH       = DMEM_DEPTH_BYTES / XLEN_BYTES;
   localparam DMEM_ADDR_WIDTH = $clog2(DMEM_DEPTH_BYTES);
   
   // address to be used if exception condition is detected

@@ -35,9 +35,8 @@ module friscv_pipelined_tb;
   initial #20 rst_n = 1;
 
   property reset_val;
-    @(posedge clk) disable iff (rst_n == 1) begin 
+    @(posedge clk) disable iff (rst_n == 1) 
       pc_s == 0;
-    end
   endproperty
 
   assert_rst_val: assert property(reset_val);
