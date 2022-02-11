@@ -4,7 +4,8 @@
 RV32I Implementation to be run on FPGA.
 
 ### Strategy
-Start by implementing data/control for add/sub, and/or/xor, slt, lw/sw, beq. Once this is complete, look at expanding to cover remaining instructions.
+- Completed initial implemention of RV32I single cycle CPU (not fully verified).
+- Now working on implementing 5-stage pipelined process with data/control hazard avoidance, basic branch prediction and exceptions.
 
 ## Repo Structure
 **FRiscV**: *top*  
