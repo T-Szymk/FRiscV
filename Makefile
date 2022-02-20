@@ -12,11 +12,14 @@ single_cycle:
 	vivado -mode batch -nojournal -source "../scripts/tcl/friscv_xilinx_SC.tcl" \
 	-log $(PROJECT_NAME)_vivado.log
 
-.PHONY: sim_pipeline
-sim_pipeline:
+.PHONY: build_sim_pipeline
+build_sim_pipeline:
 	vcom -2008 -check_synthesis -pedanticerrors -f $(PIPELINE_VHDL_FILES)
 	vlog -sv +define+SIM=1 -f $(PIPELINE_SV_FILES)
-	vsim -voptargs="+acc" friscv_pipelined_tb -do ./scripts/sim/friscv_top_pipelined.do
+
+.PHONY: sim_pipeline
+sim_pipeline: build_sim_pipeline
+	vsim -voptargs="+acc" friscv_pipelined_tb
 
 .PHONY: pipeline
 pipeline:

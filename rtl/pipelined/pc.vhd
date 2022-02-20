@@ -11,12 +11,13 @@
 library IEEE;
 use IEEE.std_logic_1164.all;
 use IEEE.numeric_std.all;
-use work.friscv_pkg.all;
+use work.friscv_vhdl_pkg.all;
 
 entity pc is 
   port(
     clk        : in  std_logic;
     rst_n      : in  std_logic;
+    pc_ce_in   : in  std_logic;
     pc_src_in  : in  std_logic_vector(1 downto 0);
     alt_pc_in  : in  std_logic_vector(XLEN-1 downto 0);
 
@@ -69,9 +70,11 @@ begin  -------------------------------------------------------------------------
   begin 
 
     if rising_edge(clk) then
-
+                  
       if rst_n = '0' then  -- synch reset
         pc_r <= (others => '0'); 
+      elsif pc_ce_in = '0' then
+        pc_r <= pc_r; 
       else
         pc_r <= unsigned(pc_int_s);
       end if;

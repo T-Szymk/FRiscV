@@ -1,0 +1,10 @@
+-------------------------------------------------------------------------------- 
+-- Module   : friscv_pipelined_top
+-- Project  : FRiscV
+-- Author   : Tom Szymkowiak
+-- Mod. Date: 20-Feb-2022
+--------------------------------------------------------------------------------
+-- Description:
+-- ============
+-- Top level for the 5-stage pipelined implementation of the FRiscV CPU
+--------------------------------------------------------------------------------

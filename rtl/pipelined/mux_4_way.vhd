@@ -10,7 +10,7 @@
 --------------------------------------------------------------------------------
 library IEEE;
 use IEEE.std_logic_1164.all;
-use work.friscv_pkg.all;
+use work.friscv_vhdl_pkg.all;
 
 entity mux_4_way is
   generic(
@@ -38,3 +38,5 @@ begin
              (others => '0'); 
 
 end architecture rtl;
+
+--------------------------------------------------------------------------------

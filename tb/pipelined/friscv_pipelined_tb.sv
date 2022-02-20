@@ -9,7 +9,7 @@
  * Testbench to hold top level of pipelined FRiscV core.
  ******************************************************************************/
 
-import friscv_sv_pkg::*;
+import friscv_pkg::*;
 
 `define SIM 1
 
