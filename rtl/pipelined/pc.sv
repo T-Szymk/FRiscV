@@ -2,7 +2,7 @@
  * Module   : pc
  * Project  : FRiscV
  * Author   : Tom Szymkowiak
- * Mod. Date: 07-Feb-2021
+ * Mod. Date: 20-Feb-2021
  *******************************************************************************
  * Description:
  * ============
@@ -15,9 +15,10 @@ module pc (
   input  logic clk,
   input  logic rst_n,
   input  logic [1:0] pc_src_in, 
-  input  logic [XLEN-1:0] imm_in,
+  input  logic [XLEN-1:0] alt_pc_in,
   
-  output logic [XLEN-1:0] pc_out  
+  output logic [XLEN-1:0] pc_out,
+  output logic [XLEN-1:0] pc_nxt_out  
 );
 
   logic [XLEN-1:0] pc_r; 
@@ -30,7 +31,7 @@ module pc (
 
   /* pc_src mux fed by incremented pc. Can be word incremented or 
      immediate incremented */
-  assign pc_a_s = pc_r + imm_in;
+  assign pc_a_s = pc_r + alt_pc_in;
   assign pc_b_s = pc_r + XLEN_BYTES;
 
   assign pc_out = pc_r;
